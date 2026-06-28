@@ -6,8 +6,8 @@
 #   group: logical grouping (platform | devops | docs)
 #   desc : one-line description
 #
-# Consumed by bootstrap.sh (clone-or-skip) and the krci-architect
-# /bootstrap-workspace plugin skill. Add a repo here and both pick it up.
+# Consumed by bootstrap.sh (clone-or-skip) and the krci-help
+# /bootstrap-workspace command. Add a repo here and both pick it up.
 repos:
   - dir: krci-portal
     url: git@github.com:KubeRocketCI/krci-portal.git
