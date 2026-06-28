@@ -10,7 +10,7 @@
 # Usage:
 #   ./bootstrap.sh                      # clone every repo into sources/
 #   ./bootstrap.sh krci-portal edp-tekton   # clone only the named repos
-#   ./bootstrap.sh --group ci           # clone every repo in a manifest group
+#   ./bootstrap.sh --group devops       # clone every repo in a manifest group
 #   ./bootstrap.sh --list               # list manifest entries, clone nothing
 #
 # Existing directories are skipped (safe to re-run). Zero dependencies beyond
@@ -87,7 +87,7 @@ if [[ -n "$FILTER_GROUP" ]]; then
   if [[ -z "$SELECTED" ]]; then echo "Error: no repos in group '$FILTER_GROUP'" >&2; exit 1; fi
 elif [[ $# -gt 0 ]]; then
   for want in "$@"; do
-    if ! grep -qP "^${want}\t" <<< "$ALL_ENTRIES"; then
+    if ! awk -F'\t' -v k="$want" '$1==k{f=1} END{exit !f}' <<< "$ALL_ENTRIES"; then
       echo "Error: '$want' is not in the manifest. Run './bootstrap.sh --list'." >&2
       exit 1
     fi
@@ -98,7 +98,7 @@ else
 fi
 
 # --- clone --------------------------------------------------------------------
-url_for() { grep -P "^${1}\t" <<< "$ALL_ENTRIES" | cut -f2; }
+url_for() { awk -F'\t' -v k="$1" '$1==k{print $2; exit}' <<< "$ALL_ENTRIES"; }
 
 mkdir -p "$SOURCES_DIR"
 echo "Workspace: $SCRIPT_DIR"

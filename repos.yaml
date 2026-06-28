@@ -3,7 +3,7 @@
 # Each entry:
 #   dir  : local directory name inside the workspace (and what you cd into)
 #   url  : git clone URL
-#   group: logical grouping (portal | cli | ci | cd | platform | support | docs)
+#   group: logical grouping (platform | devops | docs)
 #   desc : one-line description
 #
 # Consumed by bootstrap.sh (clone-or-skip) and the krci-architect
