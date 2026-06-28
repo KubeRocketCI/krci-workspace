@@ -1,0 +1,67 @@
+# KubeRocketCI workspace manifest — single source of truth for the repo set.
+#
+# Each entry:
+#   dir  : local directory name inside the workspace (and what you cd into)
+#   url  : git clone URL
+#   group: logical grouping (portal | cli | ci | cd | platform | support | docs)
+#   desc : one-line description
+#
+# Consumed by bootstrap.sh (clone-or-skip) and the krci-architect
+# /bootstrap-workspace plugin skill. Add a repo here and both pick it up.
+repos:
+  - dir: krci-portal
+    url: git@github.com:KubeRocketCI/krci-portal.git
+    group: platform
+    desc: "Portal — React 19 + tRPC + Fastify monorepo (TypeScript)"
+  - dir: cli
+    url: git@github.com:KubeRocketCI/cli.git
+    group: platform
+    desc: "krci CLI — Cobra, talks to portal API (Go)"
+  - dir: edp-tekton
+    url: git@github.com:epam/edp-tekton.git
+    group: devops
+    desc: "Tekton ClusterInterceptor + pipelines-library (Go + Helm)"
+  - dir: tekton-custom-task
+    url: git@github.com:KubeRocketCI/tekton-custom-task.git
+    group: platform
+    desc: "ApprovalTask CRD / custom Tekton tasks operator (Go)"
+  - dir: krci-cache
+    url: git@github.com:KubeRocketCI/krci-cache.git
+    group: platform
+    desc: "Pipeline artifact cache — Echo HTTP server (Go)"
+  - dir: edp-codebase-operator
+    url: git@github.com:epam/edp-codebase-operator.git
+    group: platform
+    desc: "Codebase/CodebaseBranch/GitServer CRDs operator (Go)"
+  - dir: edp-cd-pipeline-operator
+    url: git@github.com:epam/edp-cd-pipeline-operator.git
+    group: platform
+    desc: "CDPipeline/Stage promotion operator (Go)"
+  - dir: edp-keycloak-operator
+    url: git@github.com:epam/edp-keycloak-operator.git
+    group: platform
+    desc: "Declarative Keycloak config operator (Go)"
+  - dir: edp-nexus-operator
+    url: git@github.com:epam/edp-nexus-operator.git
+    group: platform
+    desc: "Declarative Nexus config operator (Go)"
+  - dir: edp-sonar-operator
+    url: git@github.com:epam/edp-sonar-operator.git
+    group: platform
+    desc: "Declarative SonarQube config operator (Go)"
+  - dir: gitfusion
+    url: git@github.com:KubeRocketCI/gitfusion.git
+    group: platform
+    desc: "Unified Git provider adapter — Echo, OpenAPI (Go)"
+  - dir: edp-cluster-add-ons
+    url: git@github.com:epam/edp-cluster-add-ons.git
+    group: devops
+    desc: "Argo CD App-of-Apps add-on catalog (Helm/YAML)"
+  - dir: edp-install
+    url: git@github.com:epam/edp-install.git
+    group: devops
+    desc: "Umbrella platform installation chart (Helm)"
+  - dir: krci-docs
+    url: git@github.com:KubeRocketCI/docs.git
+    group: docs
+    desc: "Documentation site docs.kuberocketci.io (Docusaurus)"

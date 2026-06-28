@@ -1,0 +1,32 @@
+name: Feature request
+description: Suggest a new capability or improvement for the workspace.
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem would this solve?
+      description: The use case or pain point. What are you trying to do?
+      placeholder: "I want to bootstrap only the components for <feature>, but..."
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: What would you add or change? A manifest field, a script flag, a doc?
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Other approaches you thought about.
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Scope
+      options:
+        - label: This keeps the repo a thin meta-repo (manifest + scripts + docs), not application code.
+          required: true

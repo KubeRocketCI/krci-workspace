@@ -1,0 +1,19 @@
+krci-workspace
+Copyright 2026 The KubeRocketCI Authors
+
+This product includes software developed by The KubeRocketCI Authors
+(https://github.com/KuberocketCI) as part of the KubeRocketCI project
+(https://docs.kuberocketci.io).
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+This repository is a development workspace meta-repo. It contains only a
+manifest, helper scripts, and documentation; it clones KubeRocketCI component
+repositories at bootstrap time into the (git-ignored) sources/ directory. Those
+components are NOT redistributed by this repository — each remains under its own
+license in its own upstream repository (epam/* and KubeRocketCI/*). Please
+consult each component's upstream project for its license terms.

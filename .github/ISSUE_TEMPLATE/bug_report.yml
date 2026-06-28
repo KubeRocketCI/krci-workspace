@@ -1,0 +1,72 @@
+name: Bug report
+description: Something in the workspace bootstrap doesn't work as documented.
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to file a bug! This repo clones component
+        repositories into `sources/` via `bootstrap.sh`. Please confirm the
+        issue reproduces on a fresh clone before filing.
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: A clear description of the bug and what you expected instead.
+      placeholder: "./bootstrap.sh fails because..."
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Which area?
+      description: Where does it fail?
+      options:
+        - bootstrap.sh (clone)
+        - git-pull-all.sh
+        - repos.yaml (manifest parsing)
+        - .gitignore / sources/ layout
+        - Documentation (CLAUDE.md / README)
+        - Other (describe below)
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+      description: The exact commands you ran.
+      placeholder: |
+        1. git clone https://github.com/KubeRocketCI/krci-workspace
+        2. cd krci-workspace
+        3. ./bootstrap.sh
+      render: shell
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant logs / output
+      description: Paste the failing output. Redact any secrets.
+      render: shell
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Versions and platform.
+      value: |
+        - OS / arch (e.g. macOS 15 arm64):
+        - bash version:
+        - git version:
+        - Repo commit (git rev-parse --short HEAD):
+    validations:
+      required: true
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Pre-flight checks
+      options:
+        - label: I reproduced this on a fresh clone of the repository.
+          required: true
+        - label: I have access to the git remotes listed in `repos.yaml`.
+          required: true

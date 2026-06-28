@@ -1,0 +1,10 @@
+# Engagement workspace meta-repo: tracks ONLY the manifest, scripts and docs.
+# Every component repo is cloned into sources/ as its own independent git repo.
+# Ignore everything under sources/ (keeps the meta-repo thin, makes accidental
+# gitlink embedding impossible) EXCEPT the component-reference doc.
+/sources/*
+!/sources/CLAUDE.md
+
+# Local / generated
+/.claude/settings.local.json
+.DS_Store
