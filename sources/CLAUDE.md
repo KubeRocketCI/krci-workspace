@@ -77,6 +77,9 @@ The top-level meta Helm chart for installing the entire KubeRocketCI platform. R
 **`krci-docs`** — `TypeScript` · Docusaurus v3 static site.
 The official documentation website (docs.kuberocketci.io). `docs/` holds current Markdown content, `versioned_docs/` holds per-release snapshots. The authoritative reference for operator guides, user guides, API references, and architecture documentation.
 
+**`claude-code-telemetry`** — `Helm/YAML` + `Docker Compose` · Self-hosted OpenTelemetry back end for Claude Code usage.
+Ingests the OTel metrics/events Claude Code emits and attributes them to business dimensions (`organization`, `project`, `jira.epic`, `jira.story`) without capturing prompts or file contents. Pipeline: OTel Collector → Prometheus (metrics) + Loki (events) → Grafana (dashboards), packaged for both a laptop (`local/` Docker Compose testbed) and a cluster (`deploy-templates/` Helm chart). Not part of the KRCI CI/CD data path — an observability tool for teams operating Claude Code itself.
+
 ---
 
 ## Key CRD Group Summary

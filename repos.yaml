@@ -65,3 +65,7 @@ repos:
     url: git@github.com:KubeRocketCI/docs.git
     group: docs
     desc: "Documentation site docs.kuberocketci.io (Docusaurus)"
+  - dir: claude-code-telemetry
+    url: git@github.com:KubeRocketCI/claude-code-telemetry.git
+    group: devops
+    desc: "Claude Code usage telemetry — OTel Collector + Prometheus + Loki + Grafana"
