@@ -25,6 +25,10 @@ repos:
     url: git@github.com:KubeRocketCI/tekton-custom-task.git
     group: platform
     desc: "ApprovalTask CRD / custom Tekton tasks operator (Go)"
+  - dir: tekton-pipeline-queue
+    url: git@github.com:KubeRocketCI/tekton-pipeline-queue.git
+    group: platform
+    desc: "PipelineRunQueue CRD — per-lane Tekton PipelineRun concurrency operator (Go)"
   - dir: krci-cache
     url: git@github.com:KubeRocketCI/krci-cache.git
     group: platform

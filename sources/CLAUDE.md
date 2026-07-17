@@ -26,6 +26,9 @@ Two components: (1) a `ClusterInterceptor` HTTP server (`cmd/interceptor/`) that
 **`tekton-custom-task`** — `Go` · kubebuilder operator.
 Extends Tekton with custom task types. Defines the `ApprovalTask` CRD (`api/v1alpha1/`) — a human-approval gate that pauses a `PipelineRun` until explicitly approved or rejected. Controller in `internal/`, Helm chart in `deploy-templates/`.
 
+**`tekton-pipeline-queue`** — `Go` · kubebuilder v4 operator.
+Queues Tekton PipelineRuns instead of letting them all start at once. Producers create runs paused (`spec.status: PipelineRunPending`); a `PipelineRunQueue` CR (`edp.epam.com/v1alpha1`) selects them by label selector, groups them into *lanes* by `queueKey` label values (e.g. codebase + branch), and admits them FIFO per lane up to `concurrency`, with `Queue`/`ReplaceQueued`/`CancelInProgress` strategies. Stateless by design — every reconcile recomputes from the live PipelineRun set. Controller in `internal/controller/`, types in `api/v1alpha1/`, Helm chart in `deploy-templates/`. Read its `AGENTS.md` before editing — several outputs are generated and CI-enforced (`make validate-docs`).
+
 **`krci-cache`** — `Go` · Echo HTTP server.
 A lightweight artifact cache for Tekton pipelines. Accepts uploads (with optional tar.gz extraction) and serves cached files. Optimized for memory-constrained pods (targets 512 MB). Entry: `main.go`, logic in `uploader/`.
 
@@ -92,12 +95,14 @@ Ingests the OTel metrics/events Claude Code emits and attributes them to busines
 | `edp.epam.com` | edp-nexus-operator | Nexus, NexusRepository, … |
 | `edp.epam.com` | edp-sonar-operator | Sonar, SonarQualityGate, … |
 | `edp.epam.com` | tekton-custom-task | ApprovalTask |
+| `edp.epam.com` | tekton-pipeline-queue | PipelineRunQueue |
 
 ## Cross-Repo Data Flow
 
 ```
 Git push
   → edp-tekton (ClusterInterceptor enriches with Codebase/CodebaseBranch)
+  → tekton-pipeline-queue (admits pending PipelineRuns FIFO per lane)
   → Tekton Pipeline (clone → build → test → SAST → SonarQube gate)
   → image pushed to Nexus/registry
   → edp-codebase-operator updates CodebaseBranch status
