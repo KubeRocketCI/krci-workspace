@@ -85,18 +85,6 @@ Ingests the OTel metrics/events Claude Code emits and attributes them to busines
 
 ---
 
-## Key CRD Group Summary
-
-| Group | Repo | Core Types |
-|---|---|---|
-| `v2.edp.epam.com` | edp-codebase-operator | Codebase, CodebaseBranch, GitServer, CodebaseImageStream |
-| `v2.edp.epam.com` | edp-cd-pipeline-operator | CDPipeline, Stage |
-| `v1.edp.epam.com` | edp-keycloak-operator | Keycloak, KeycloakRealm, KeycloakClient, … |
-| `edp.epam.com` | edp-nexus-operator | Nexus, NexusRepository, … |
-| `edp.epam.com` | edp-sonar-operator | Sonar, SonarQualityGate, … |
-| `edp.epam.com` | tekton-custom-task | ApprovalTask |
-| `edp.epam.com` | tekton-pipeline-queue | PipelineRunQueue |
-
 ## Cross-Repo Data Flow
 
 ```
