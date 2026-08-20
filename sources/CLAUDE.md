@@ -69,6 +69,13 @@ A unified Git provider adapter that normalises GitHub, GitLab, and Bitbucket API
 
 ---
 
+### Quality & Testing
+
+**`krci-autotests`** — `Python` · pytest + Playwright E2E suite, uv-managed (Python 3.14).
+Platform-level end-to-end tests over `krci_testkit/`, a thin typed client for the KRCI CRDs. Covers cross-component journeys only: codebase onboarding (create/import/clone), branch CRUD with review/build PipelineRuns, review recheck, CD deploy/AutoDeploy/promote (asserted via deploy runs, Argo CD Application health, and `CodebaseImageStream` tags), and portal UI smoke. VCS access goes through a `VCSProvider` protocol (GitLab, GitHub, Bitbucket Cloud; Gerrit unsupported). Environment-neutral — all cluster/VCS settings come from `.env` (`KRCI_*` vars); suites defined in `suites.yaml`, entry points in `Makefile` (`make preflight`, `make bootstrap`, `make test SUITE=smoke-api`). Single-operator behavior belongs in that operator's own repo, not here.
+
+---
+
 ### Platform Configuration & Docs
 
 **`edp-cluster-add-ons`** — `Helm/YAML` · Argo CD App-of-Apps, no compiled code.
@@ -106,3 +113,4 @@ Git push
 - To understand a CRD schema, check `api/v1/` or `api/v1alpha1/` in the relevant operator repo.
 - All operators follow the same structure: `cmd/main.go` → manager setup, `api/<version>/` → types, `internal/controller/` or `controllers/` → reconcilers.
 - `edp-cluster-add-ons` is the single source of truth for which third-party tools are deployed and how they are configured.
+- Cross-component E2E scenarios live in `krci-autotests`; a test that exercises only one operator belongs in that operator's repo instead.
