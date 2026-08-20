@@ -3,7 +3,7 @@
 # Each entry:
 #   dir  : local directory name inside the workspace (and what you cd into)
 #   url  : git clone URL
-#   group: logical grouping (platform | devops | docs)
+#   group: logical grouping (platform | devops | qa | docs)
 #   desc : one-line description
 #
 # Consumed by bootstrap.sh (clone-or-skip) and the krci-help
@@ -69,6 +69,10 @@ repos:
     url: git@github.com:KubeRocketCI/docs.git
     group: docs
     desc: "Documentation site docs.kuberocketci.io (Docusaurus)"
+  - dir: krci-autotests
+    url: git@github.com:KubeRocketCI/krci-autotests.git
+    group: qa
+    desc: "Platform E2E test suite — pytest + Playwright over krci_testkit (Python)"
   - dir: claude-code-telemetry
     url: git@github.com:KubeRocketCI/claude-code-telemetry.git
     group: devops
