@@ -1,0 +1,23 @@
+# ripgrep / fd ignore rules (higher precedence than .gitignore).
+#
+# .gitignore hides sources/ from git on purpose. That also hid it from
+# root-level ripgrep, so cross-component search silently returned nothing.
+#
+# Whitelist the component directories only -- NOT their contents. An .ignore
+# whitelist outranks .gitignore at any depth, so `!/sources/**` would switch
+# off every component's own .gitignore and flood results with node_modules,
+# .venv and build output. Stopping the whitelist at the directory lets each
+# component's .gitignore govern its own subtree, exactly as it does when you
+# run ripgrep from inside that repo.
+!/sources/*/
+
+# Ripgrep skips dot-directories by default. Re-include the ones that hold
+# tracked configuration worth searching across components.
+!/sources/*/.github/
+!/sources/*/.krci-ai/
+!/sources/*/.chglog/
+
+# Verify this file after adding a component; both sides should agree:
+#   diff <(rg --files sources | sed 's|^sources/||' | sort) \
+#        <(for r in sources/*/; do git -C "$r" ls-files -co --exclude-standard \
+#            | sed "s|^|$(basename "$r")/|"; done | sort)
