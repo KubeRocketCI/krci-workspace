@@ -69,6 +69,10 @@ repos:
     url: git@github.com:KubeRocketCI/docs.git
     group: docs
     desc: "Documentation site docs.kuberocketci.io (Docusaurus)"
+  - dir: skills
+    url: git@github.com:KubeRocketCI/skills.git
+    group: docs
+    desc: "Agent Skills for delivery roles (BA, dev, QA) operating on the platform — SKILL.md catalog over the krci CLI"
   - dir: krci-autotests
     url: git@github.com:KubeRocketCI/krci-autotests.git
     group: qa

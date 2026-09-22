@@ -87,6 +87,9 @@ The top-level meta Helm chart for installing the entire KubeRocketCI platform. R
 **`krci-docs`** — `TypeScript` · Docusaurus v3 static site.
 The official documentation website (docs.kuberocketci.io). `docs/` holds current Markdown content, `versioned_docs/` holds per-release snapshots. The authoritative reference for operator guides, user guides, API references, and architecture documentation.
 
+**`skills`** — `Markdown` + `JSON` · Agent Skills (agentskills.io) plugin marketplace for Claude Code, Codex, Copilot, Cursor, Gemini CLI.
+Skills for delivery roles (BA, developer, QA) operating on the platform through the `krci` CLI: diagnose runs, map environments, assign ownership. One plugin per audience in `plugins/<plugin>/`; knowledge only in `skills/<skill>/SKILL.md`, evals in `evals/<case>/`. Contract and validator in `AGENTS.md`. Platform-development skills live in `claude-plugins`.
+
 **`claude-code-telemetry`** — `Helm/YAML` + `Docker Compose` · Self-hosted OpenTelemetry back end for Claude Code usage.
 Ingests the OTel metrics/events Claude Code emits and attributes them to business dimensions (`organization`, `project`, `jira.epic`, `jira.story`) without capturing prompts or file contents. Pipeline: OTel Collector → Prometheus (metrics) + Loki (events) → Grafana (dashboards), packaged for both a laptop (`local/` Docker Compose testbed) and a cluster (`deploy-templates/` Helm chart). Not part of the KRCI CI/CD data path — an observability tool for teams operating Claude Code itself.
 
@@ -114,3 +117,4 @@ Git push
 - All operators follow the same structure: `cmd/main.go` → manager setup, `api/<version>/` → types, `internal/controller/` or `controllers/` → reconcilers.
 - `edp-cluster-add-ons` is the single source of truth for which third-party tools are deployed and how they are configured.
 - Cross-component E2E scenarios live in `krci-autotests`; a test that exercises only one operator belongs in that operator's repo instead.
+- Skills for operating on the platform live in `skills`; verify every `krci` command and flag against the `cli` repo before writing it down.
