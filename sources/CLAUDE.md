@@ -4,17 +4,17 @@ Deep-dive reference for the KubeRocketCI component repositories cloned into this
 
 ## Platform Architecture (TL;DR)
 
-Developer pushes code → Git webhook → Tekton interceptor enriches payload → Tekton pipeline (build/test/SAST/SonarQube) → image pushed to registry → CD Pipeline Operator promotes artifact → Argo CD deploys to cluster. All authentication flows through Keycloak OIDC. All configuration is managed as Kubernetes CRDs.
+All authentication flows through Keycloak OIDC. All configuration is managed as Kubernetes CRDs.
 
 ## Repositories
 
 ### Portal & UI
 
 **`krci-portal`** — `TypeScript` · React 19 + tRPC + Fastify monorepo (pnpm workspaces).
-The primary web UI for the platform. `apps/client/` is the React SPA, `apps/server/` is the Fastify/tRPC backend, `packages/trpc/` holds tRPC routers and Kubernetes API clients, `packages/shared/` holds shared types and Kubernetes resource interfaces. Talks to the Kubernetes API directly — reads and writes all KRCI CRDs.
+The primary web UI for the platform. Talks to the Kubernetes API directly — reads and writes all KRCI CRDs.
 
 **`cli`** — `Go` · Cobra CLI, talks to krci-portal tRPC/REST API (no direct Kubernetes access).
-The `krci` terminal tool for managing codebases, pipeline runs, deployments, and environments. Designed for both human use and AI-agent workflows (all data commands emit structured JSON). Entry: `cmd/`, commands under `pkg/cmd/<group>/<verb>/`, portal client in `internal/portal/`.
+The `krci` terminal tool for managing codebases, pipeline runs, deployments, and environments. Designed for both human use and AI-agent workflows (all data commands emit structured JSON).
 
 ---
 
@@ -24,13 +24,13 @@ The `krci` terminal tool for managing codebases, pipeline runs, deployments, and
 Two components: (1) a `ClusterInterceptor` HTTP server (`cmd/interceptor/`) that enriches VCS webhook payloads (GitHub, GitLab, Gerrit, Bitbucket) with `Codebase`/`CodebaseBranch` metadata; (2) `charts/pipelines-library/` — the full library of Tekton Tasks, Pipelines, TriggerBindings, TriggerTemplates, and EventListeners covering 10+ languages across all four VCS providers. This is the heart of KRCI CI.
 
 **`tekton-custom-task`** — `Go` · kubebuilder operator.
-Extends Tekton with custom task types. Defines the `ApprovalTask` CRD (`api/v1alpha1/`) — a human-approval gate that pauses a `PipelineRun` until explicitly approved or rejected. Controller in `internal/`, Helm chart in `deploy-templates/`.
+Extends Tekton with custom task types. Defines the `ApprovalTask` CRD (`api/v1alpha1/`) — a human-approval gate that pauses a `PipelineRun` until explicitly approved or rejected.
 
 **`tekton-pipeline-queue`** — `Go` · kubebuilder v4 operator.
-Queues Tekton PipelineRuns instead of letting them all start at once. Producers create runs paused (`spec.status: PipelineRunPending`); a `PipelineRunQueue` CR (`edp.epam.com/v1alpha1`) selects them by label selector, groups them into *lanes* by `queueKey` label values (e.g. codebase + branch), and admits them FIFO per lane up to `concurrency`, with `Queue`/`ReplaceQueued`/`CancelInProgress` strategies. Stateless by design — every reconcile recomputes from the live PipelineRun set. Controller in `internal/controller/`, types in `api/v1alpha1/`, Helm chart in `deploy-templates/`. Read its `AGENTS.md` before editing — several outputs are generated and CI-enforced (`make validate-docs`).
+Queues Tekton PipelineRuns instead of letting them all start at once. CRD: `PipelineRunQueue` (`edp.epam.com/v1alpha1`). Read its `AGENTS.md` before editing — several outputs are generated and CI-enforced (`make validate-docs`).
 
 **`krci-cache`** — `Go` · Echo HTTP server.
-A lightweight artifact cache for Tekton pipelines. Accepts uploads (with optional tar.gz extraction) and serves cached files. Optimized for memory-constrained pods (targets 512 MB). Entry: `main.go`, logic in `uploader/`.
+A lightweight artifact cache for Tekton pipelines. Accepts uploads (with optional tar.gz extraction) and serves cached files. Optimized for memory-constrained pods (targets 512 MB).
 
 ---
 
@@ -38,11 +38,11 @@ A lightweight artifact cache for Tekton pipelines. Accepts uploads (with optiona
 
 **`edp-codebase-operator`** — `Go` · kubebuilder operator.
 Reconciles codebase entities: provisions Git repositories, manages branches, git servers, Jira integration, and image streams. Defines the core source-of-truth CRDs consumed by almost every other component.
-CRDs (`v2.edp.epam.com/v1`): `Codebase`, `CodebaseBranch`, `GitServer`, `JiraServer`, `JiraIssueMetadata`, `CDStageDeploy`, `CodebaseImageStream`, `QuickLink`. Entry: `cmd/main.go`, controllers in `controllers/`, types in `api/v1/`.
+CRDs (`v2.edp.epam.com/v1`): `Codebase`, `CodebaseBranch`, `GitServer`, `JiraServer`, `JiraIssueMetadata`, `CDStageDeploy`, `CodebaseImageStream`, `QuickLink`.
 
 **`edp-cd-pipeline-operator`** — `Go` · kubebuilder operator.
 Reconciles continuous delivery pipeline entities and handles promotion between environments on Kubernetes and OpenShift.
-CRDs (`v2.edp.epam.com/v1`): `CDPipeline`, `Stage`. Entry: `cmd/main.go`, types in `api/v1/`, controllers in `internal/`.
+CRDs (`v2.edp.epam.com/v1`): `CDPipeline`, `Stage`.
 
 ---
 
@@ -65,33 +65,33 @@ CRDs (`edp.epam.com/v1alpha1`): `Sonar`, `SonarProject`, `SonarQualityGate`, `So
 ### Supporting Services
 
 **`gitfusion`** — `Go` · Echo HTTP server, OpenAPI-driven.
-A unified Git provider adapter that normalises GitHub, GitLab, and Bitbucket APIs behind a single REST interface. Used by the portal for repository/branch/PR discovery. API spec drives server and client code via oapi-codegen. Entry: `cmd/`, provider implementations in `pkg/services/`, Helm chart in `deploy-templates/`.
+A unified Git provider adapter that normalises GitHub, GitLab, and Bitbucket APIs behind a single REST interface. Used by the portal for repository/branch/PR discovery. API spec drives server and client code via oapi-codegen.
 
 ---
 
 ### Quality & Testing
 
 **`krci-autotests`** — `Python` · pytest + Playwright E2E suite, uv-managed (Python 3.14).
-Platform-level end-to-end tests over `krci_testkit/`, a thin typed client for the KRCI CRDs. Covers cross-component journeys only: codebase onboarding (create/import/clone), branch CRUD with review/build PipelineRuns, review recheck, CD deploy/AutoDeploy/promote (asserted via deploy runs, Argo CD Application health, and `CodebaseImageStream` tags), and portal UI smoke. VCS access goes through a `VCSProvider` protocol (GitLab, GitHub, Bitbucket Cloud, Gerrit); one provider is exercised per environment — whichever the cluster's `GitServer` names — and GitLab and Gerrit are the live-validated ones. Environment-neutral — all cluster/VCS settings come from `.env` (`KRCI_*` vars); suites defined in `suites.yaml`, entry points in `Makefile` (`make preflight`, `make bootstrap`, `make test SUITE=smoke-api`). Single-operator behavior belongs in that operator's own repo, not here.
+Platform-level end-to-end tests over `krci_testkit/`, a thin typed client for the KRCI CRDs. Covers cross-component journeys only: codebase onboarding (create/import/clone), branch CRUD with review/build PipelineRuns, review recheck, CD deploy/AutoDeploy/promote (asserted via deploy runs, Argo CD Application health, and `CodebaseImageStream` tags), and portal UI smoke. VCS access goes through a `VCSProvider` protocol (GitLab, GitHub, Bitbucket Cloud, Gerrit); one provider is exercised per environment — whichever the cluster's `GitServer` names — and GitLab and Gerrit are the live-validated ones.
 
 ---
 
 ### Platform Configuration & Docs
 
 **`edp-cluster-add-ons`** — `Helm/YAML` · Argo CD App-of-Apps, no compiled code.
-A curated catalog of pre-configured Kubernetes add-on Helm charts (Argo CD, cert-manager, external-secrets, Atlantis, etc.) for bootstrapping a KRCI cluster via GitOps. `clusters/core/apps/` is the umbrella App-of-Apps chart; `clusters/core/addons/` holds individual add-on charts; `clusters/prod/` holds production overrides.
+A curated catalog of pre-configured Kubernetes add-on Helm charts (Argo CD, cert-manager, external-secrets, Atlantis, etc.) for bootstrapping a KRCI cluster via GitOps.
 
 **`edp-install`** — `Helm` · Umbrella installation chart, no compiled code.
 The top-level meta Helm chart for installing the entire KubeRocketCI platform. References all component charts as sub-chart dependencies. Use as the canonical entry point for platform installation and values documentation.
 
 **`krci-docs`** — `TypeScript` · Docusaurus v3 static site.
-The official documentation website (docs.kuberocketci.io). `docs/` holds current Markdown content, `versioned_docs/` holds per-release snapshots. The authoritative reference for operator guides, user guides, API references, and architecture documentation.
+The official documentation website (docs.kuberocketci.io). The authoritative reference for operator guides, user guides, API references, and architecture documentation.
 
 **`skills`** — `Markdown` + `JSON` · Agent Skills (agentskills.io) plugin marketplace for Claude Code, Codex, Copilot, Cursor, Gemini CLI.
-Skills for every delivery role (BA, PO, PM, developer, QA, DevOps) working on the platform through the `krci` CLI, from ticket to production. One plugin, `krci`, in `plugins/krci/`; skills are flat under `skills/krci-<verb>-<object>/` with `metadata.roles` and `metadata.stage`, and `krci-overview` is the foundation and router. Evals live in `evals/<case>/`, and planned skills are listed in `docs/skill-map.md`. The contract is in `AGENTS.md` and `docs/architecture.md`, checked by `scripts/validate.py`. Role craft that doesn't depend on the platform, and platform development, live in `claude-plugins`.
+Skills for every delivery role (BA, PO, PM, developer, QA, DevOps) working on the platform through the `krci` CLI, from ticket to production. Role craft that doesn't depend on the platform, and platform development, live in `claude-plugins`.
 
 **`claude-code-telemetry`** — `Helm/YAML` + `Docker Compose` · Self-hosted OpenTelemetry back end for Claude Code usage.
-Ingests the OTel metrics/events Claude Code emits and attributes them to business dimensions (`organization`, `project`, `jira.epic`, `jira.story`) without capturing prompts or file contents. Pipeline: OTel Collector → Prometheus (metrics) + Loki (events) → Grafana (dashboards), packaged for both a laptop (`local/` Docker Compose testbed) and a cluster (`deploy-templates/` Helm chart). Not part of the KRCI CI/CD data path — an observability tool for teams operating Claude Code itself.
+Ingests the OTel metrics/events Claude Code emits and attributes them to business dimensions (`organization`, `project`, `jira.epic`, `jira.story`) without capturing prompts or file contents. Not part of the KRCI CI/CD data path — an observability tool for teams operating Claude Code itself.
 
 ---
 
