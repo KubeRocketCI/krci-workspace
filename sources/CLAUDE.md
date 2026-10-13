@@ -67,6 +67,9 @@ CRDs (`edp.epam.com/v1alpha1`): `Sonar`, `SonarProject`, `SonarQualityGate`, `So
 **`gitfusion`** — `Go` · Echo HTTP server, OpenAPI-driven.
 A unified Git provider adapter that normalises GitHub, GitLab, and Bitbucket APIs behind a single REST interface. Used by the portal for repository/branch/PR discovery. API spec drives server and client code via oapi-codegen.
 
+**`krci-audit`** — `Go` + `Helm` · chi HTTP server, OpenAPI-driven (oapi-codegen).
+Identity-attributed audit trail of Kubernetes mutations. Capture: a kube-audit-rest `ValidatingWebhookConfiguration` (`failurePolicy: Ignore`, never blocks) logs each `AdmissionReview`; a Vector sidecar ships it to an append-only, monthly-partitioned PostgreSQL `audit_events` table. Binaries: `krci-audit-migrate` (schema + roles) and `krci-audit-api` (read-only: `events`, `initiator`, `facets` under `/api/v1/audit/`). Chart adds a partition-rotation/retention CronJob and `db.mode` `external`/`pgo`/`simple`. Consumed by the portal Audit Events admin page and the PipelineRun "Triggered By" field.
+
 ---
 
 ### Quality & Testing
@@ -116,5 +119,6 @@ Git push
 - To understand a CRD schema, check `api/v1/` or `api/v1alpha1/` in the relevant operator repo.
 - All operators follow the same structure: `cmd/main.go` → manager setup, `api/<version>/` → types, `internal/controller/` or `controllers/` → reconcilers.
 - `edp-cluster-add-ons` is the single source of truth for which third-party tools are deployed and how they are configured.
+- To change the audit read API, edit `krci-audit/internal/api/oapi.yaml` and run `make generate` — never hand-edit `oapi_gen.go`; the portal client is `krci-portal/packages/trpc/src/clients/krciAudit/`.
 - Cross-component E2E scenarios live in `krci-autotests`; a test that exercises only one operator belongs in that operator's repo instead.
 - Skills for operating on the platform live in `skills`; verify every `krci` command and flag against the `cli` repo before writing it down.
