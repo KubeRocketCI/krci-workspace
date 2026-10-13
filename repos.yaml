@@ -57,6 +57,10 @@ repos:
     url: git@github.com:KubeRocketCI/gitfusion.git
     group: platform
     desc: "Unified Git provider adapter — Echo, OpenAPI (Go)"
+  - dir: krci-audit
+    url: git@github.com:KubeRocketCI/krci-audit.git
+    group: platform
+    desc: "Kubernetes admission audit trail — capture, Postgres store, read API (Go + Helm)"
   - dir: edp-cluster-add-ons
     url: git@github.com:epam/edp-cluster-add-ons.git
     group: devops
