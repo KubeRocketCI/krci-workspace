@@ -93,6 +93,9 @@ The official documentation website (docs.kuberocketci.io). The authoritative ref
 **`skills`** — `Markdown` + `JSON` · Agent Skills (agentskills.io) plugin marketplace for Claude Code, Codex, Copilot, Cursor, Gemini CLI.
 Skills for every delivery role (BA, PO, PM, developer, QA, DevOps) working on the platform through the `krci` CLI, from ticket to production. Role craft that doesn't depend on the platform, and platform development, live in `claude-plugins`.
 
+**`claude-plugins`** — `Markdown` + `TypeScript` (mods) · Claude Code plugin marketplace `kuberocketci-plugins`.
+Agents, skills, and commands for platform development. Plugins in `plugins/krci-<domain>/`; registry in `.claude-plugin/marketplace.json`. `/krci-triage:bootstrap-workspace` reads this workspace's `repos.yaml`. No build; checks: `markdownlint`, `claude plugin validate`, `claude plugin test`.
+
 **`claude-code-telemetry`** — `Helm/YAML` + `Docker Compose` · Self-hosted OpenTelemetry back end for Claude Code usage.
 Ingests the OTel metrics/events Claude Code emits and attributes them to business dimensions (`organization`, `project`, `jira.epic`, `jira.story`) without capturing prompts or file contents. Not part of the KRCI CI/CD data path — an observability tool for teams operating Claude Code itself.
 
@@ -111,6 +114,19 @@ Git push
   → Argo CD deploys (via edp-cluster-add-ons configuration)
   → krci-portal / cli expose status to user
 ```
+
+## Agent Ownership
+
+Agents from `claude-plugins`, by layer changed.
+
+| Work | Agent |
+|---|---|
+| Go: operators, `cli`, `gitfusion`, `krci-cache`, `krci-audit`, `edp-tekton` interceptor, `tekton-*` | `krci-godev:go-dev` |
+| `krci-portal` | `krci-fullstack:fullstack-dev` |
+| Tekton tasks, pipelines, triggers in `edp-tekton/charts/pipelines-library/` | `krci-devops:devops` |
+| `krci-docs`, `edp-install/RELEASES.md` | `krci-docs:technical-writer` |
+| Cross-repo design | `krci-architect:architect` |
+| Jira bug: root cause, fix, testbed verify | `/krci-triage:krci-fix-the-issue` |
 
 ## Agent Tips
 
