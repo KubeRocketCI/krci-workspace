@@ -61,6 +61,10 @@ repos:
     url: git@github.com:KubeRocketCI/krci-audit.git
     group: platform
     desc: "Kubernetes admission audit trail — capture, Postgres store, read API (Go + Helm)"
+  - dir: krci-env-daemon
+    url: git@github.com:KubeRocketCI/krci-env-daemon.git
+    group: platform
+    desc: "Wakes KEDA scale-to-zero environments on first request — KEDA external-push scaler fed by Envoy Gateway access logs (Go + Helm)"
   - dir: edp-cluster-add-ons
     url: git@github.com:epam/edp-cluster-add-ons.git
     group: devops

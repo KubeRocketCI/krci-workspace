@@ -70,6 +70,9 @@ A unified Git provider adapter that normalises GitHub, GitLab, and Bitbucket API
 **`krci-audit`** — `Go` + `Helm` · chi HTTP server, OpenAPI-driven (oapi-codegen).
 Identity-attributed audit trail of Kubernetes mutations. Capture: a kube-audit-rest `ValidatingWebhookConfiguration` (`failurePolicy: Ignore`, never blocks) logs each `AdmissionReview`; a Vector sidecar ships it to an append-only, monthly-partitioned PostgreSQL `audit_events` table. Binaries: `krci-audit-migrate` (schema + roles) and `krci-audit-api` (read-only: `events`, `initiator`, `facets` under `/api/v1/audit/`). Chart adds a partition-rotation/retention CronJob and `db.mode` `external`/`pgo`/`simple`. Consumed by the portal Audit Events admin page and the PipelineRun "Triggered By" field.
 
+**`krci-env-daemon`** — `Go` + `Helm` · gRPC (KEDA external-push scaler, OTLP logs receiver) + HTTP.
+Wakes environments that KEDA scaled to zero. Envoy Gateway sends the access log over OTLP; the daemon maps the host to an environment through accepted HTTPRoutes and pushes "active" to KEDA. Envoy serves a waiting page that polls `/.krci-wake/status` until workloads are Ready. Idle past `IDLE` → polls return inactive, KEDA scales to zero; running Tekton TaskRun pods count as use. `krci.epam.com/wake-after` on a ScaledObject orders start-up. One replica; state per environment in a Lease. Not in the request path; KEDA is the only writer of replicas.
+
 ---
 
 ### Quality & Testing
@@ -121,7 +124,7 @@ Agents from `claude-plugins`, by layer changed.
 
 | Work | Agent |
 |---|---|
-| Go: operators, `cli`, `gitfusion`, `krci-cache`, `krci-audit`, `edp-tekton` interceptor, `tekton-*` | `krci-godev:go-dev` |
+| Go: operators, `cli`, `gitfusion`, `krci-cache`, `krci-audit`, `krci-env-daemon`, `edp-tekton` interceptor, `tekton-*` | `krci-godev:go-dev` |
 | `krci-portal` | `krci-fullstack:fullstack-dev` |
 | Tekton tasks, pipelines, triggers in `edp-tekton/charts/pipelines-library/` | `krci-devops:devops` |
 | `krci-docs`, `edp-install/RELEASES.md` | `krci-docs:technical-writer` |
