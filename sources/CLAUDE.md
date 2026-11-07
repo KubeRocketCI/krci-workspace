@@ -127,7 +127,8 @@ Agents from `claude-plugins`, by layer changed.
 | Go: operators, `cli`, `gitfusion`, `krci-cache`, `krci-audit`, `krci-env-daemon`, `edp-tekton` interceptor, `tekton-*` | `krci-godev:go-dev` |
 | `krci-portal` | `krci-fullstack:fullstack-dev` |
 | Tekton tasks, pipelines, triggers in `edp-tekton/charts/pipelines-library/` | `krci-devops:devops` |
-| `krci-docs`, `edp-install/RELEASES.md` | `krci-docs:technical-writer` |
+| `krci-docs` | `krci-docs:technical-writer` |
+| Release: map, branches, pins, `edp-install/RELEASES.md`, upgrade guide | `krci-release:release-train`, `krci-release:write-release-notes`, `krci-release:release-docs` |
 | Cross-repo design | `krci-architect:architect` |
 | Jira bug: root cause, fix, testbed verify | `/krci-triage:krci-fix-the-issue` |
 
