@@ -104,6 +104,16 @@ Ingests the OTel metrics/events Claude Code emits and attributes them to busines
 
 ---
 
+### Issue Agents
+
+**`krci-agent-dispatcher`** — Dispatcher and harness for issue agents.
+Receives issue and comment events from the Git provider and drives one agent per issue: start, turn, stop. The harness runs inside the agent: it works on the repository, verifies the change, pushes it. Read its `CLAUDE.md`, `GLOSSARY.md` and `docs/agent-harness.md` before editing.
+
+**`krci-agent-images`** — Container images for issue agents, one per toolchain under `images/<name>/`.
+Each image runs the harness from `krci-agent-dispatcher`. `images/<name>/profile.yaml` sets the toolchain's setup and verify commands and its prompt. The repo's `CLAUDE.md` holds the image contract and the release flow. Any change under `images/<name>/` bumps its `VERSION` in the same PR.
+
+---
+
 ## Cross-Repo Data Flow
 
 ```

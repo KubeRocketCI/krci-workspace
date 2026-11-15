@@ -93,3 +93,11 @@ repos:
     url: git@github.com:KubeRocketCI/claude-code-telemetry.git
     group: devops
     desc: "Claude Code usage telemetry — OTel Collector + Prometheus + Loki + Grafana"
+  - dir: krci-agent-dispatcher
+    url: git@github.com:KubeRocketCI/krci-agent-dispatcher.git
+    group: platform
+    desc: "Issue agents — dispatcher for Git provider issue events + harness that runs in each agent"
+  - dir: krci-agent-images
+    url: git@github.com:KubeRocketCI/krci-agent-images.git
+    group: devops
+    desc: "Container images for issue agents, one per toolchain"
