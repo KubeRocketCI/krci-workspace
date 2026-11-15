@@ -134,7 +134,8 @@ Agents from `claude-plugins`, by layer changed.
 
 | Work | Agent |
 |---|---|
-| Go: operators, `cli`, `gitfusion`, `krci-cache`, `krci-audit`, `krci-env-daemon`, `edp-tekton` interceptor, `tekton-*` | `krci-godev:go-dev` |
+| Go: operators, `cli`, `gitfusion`, `krci-cache`, `krci-audit`, `krci-env-daemon`, `krci-agent-dispatcher`, `edp-tekton` interceptor, `tekton-*` | `krci-godev:go-dev` |
+| `krci-agent-images`: Dockerfiles, agent profiles | `krci-devops:devops` |
 | `krci-portal` | `krci-fullstack:fullstack-dev` |
 | Tekton tasks, pipelines, triggers in `edp-tekton/charts/pipelines-library/` | `krci-devops:devops` |
 | `krci-docs` | `krci-docs:technical-writer` |
