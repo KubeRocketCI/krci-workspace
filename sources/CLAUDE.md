@@ -68,10 +68,13 @@ CRDs (`edp.epam.com/v1alpha1`): `Sonar`, `SonarProject`, `SonarQualityGate`, `So
 A unified Git provider adapter that normalises GitHub, GitLab, and Bitbucket APIs behind a single REST interface. Used by the portal for repository/branch/PR discovery. API spec drives server and client code via oapi-codegen.
 
 **`krci-audit`** — `Go` + `Helm` · chi HTTP server, OpenAPI-driven (oapi-codegen).
-Identity-attributed audit trail of Kubernetes mutations. Capture: a kube-audit-rest `ValidatingWebhookConfiguration` (`failurePolicy: Ignore`, never blocks) logs each `AdmissionReview`; a Vector sidecar ships it to an append-only, monthly-partitioned PostgreSQL `audit_events` table. Binaries: `krci-audit-migrate` (schema + roles) and `krci-audit-api` (read-only: `events`, `initiator`, `facets` under `/api/v1/audit/`). Chart adds a partition-rotation/retention CronJob and `db.mode` `external`/`pgo`/`simple`. Consumed by the portal Audit Events admin page and the PipelineRun "Triggered By" field.
+Identity-attributed audit trail of Kubernetes mutations: an admission webhook captures them into PostgreSQL, a read-only API serves them. Consumed by the `krci-portal` Audit Events admin page and the PipelineRun "Triggered By" field.
 
 **`krci-env-daemon`** — `Go` + `Helm` · gRPC (KEDA external-push scaler, OTLP logs receiver) + HTTP.
-Wakes environments that KEDA scaled to zero. Envoy Gateway sends the access log over OTLP; the daemon maps the host to an environment through accepted HTTPRoutes and pushes "active" to KEDA. Envoy serves a waiting page that polls `/.krci-wake/status` until workloads are Ready. Idle past `IDLE` → polls return inactive, KEDA scales to zero; running Tekton TaskRun pods count as use. `krci.epam.com/wake-after` on a ScaledObject orders start-up. One replica; state per environment in a Lease. Not in the request path; KEDA is the only writer of replicas.
+Wakes environments that KEDA scaled to zero on their first request, from Envoy Gateway access logs. Running Tekton TaskRun pods keep an environment awake. KEDA is the only writer of replicas.
+
+**`krci-security-operator`** — `Go` + `Helm` · controller-runtime operator, no CRDs.
+Imports Trivy Operator reports into DefectDojo. Maps each namespace to a DefectDojo product from `edp-cd-pipeline-operator` `Stage` CRs and the `app.edp.epam.com/tenant` label.
 
 ---
 
@@ -134,7 +137,7 @@ Agents from `claude-plugins`, by layer changed.
 
 | Work | Agent |
 |---|---|
-| Go: operators, `cli`, `gitfusion`, `krci-cache`, `krci-audit`, `krci-env-daemon`, `krci-agent-dispatcher`, `edp-tekton` interceptor, `tekton-*` | `krci-godev:go-dev` |
+| Go: operators, `cli`, `gitfusion`, `krci-cache`, `krci-audit`, `krci-env-daemon`, `krci-security-operator`, `krci-agent-dispatcher`, `edp-tekton` interceptor, `tekton-*` | `krci-godev:go-dev` |
 | `krci-agent-images`: Dockerfiles, agent profiles | `krci-devops:devops` |
 | `krci-portal` | `krci-fullstack:fullstack-dev` |
 | Tekton tasks, pipelines, triggers in `edp-tekton/charts/pipelines-library/` | `krci-devops:devops` |
